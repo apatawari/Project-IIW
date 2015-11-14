@@ -1,23 +1,7 @@
 package com.usc.crawler;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.htmlcleaner.TagNode;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -42,7 +26,7 @@ public class MyCrawler extends WebCrawler {
      public boolean shouldVisit(Page referringPage, WebURL url) {
          String href = url.getURL().toLowerCase();
          return !FILTERS.matcher(href).matches()
-                && href.startsWith("http://www.home-remedies-for-you.com/") && !urls.contains(href);
+                && href.startsWith("http://www.home-remedies-for-you.com/") && href.contains("/remedy/") && !urls.contains(href);
      }
 
      /**
@@ -70,10 +54,8 @@ public class MyCrawler extends WebCrawler {
 
              for (int i = 0; i < links.size(); i++) {
             	 	 urls.add(arrayView[i].toString());
-                     System.out.println(arrayView[i]);
-                                             
-          
-    }
+            	 	 
+                                        }
      
          }}
 }
