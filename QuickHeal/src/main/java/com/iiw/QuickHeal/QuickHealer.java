@@ -4,10 +4,10 @@ package com.iiw.QuickHeal;
  * Hello world!
  *
  */
-public class App 
+public class QuickHealer 
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+    	
     }
 }

@@ -1,10 +1,8 @@
 package com.usc.crawler;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +20,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class MyCrawler extends WebCrawler {
 	//created to eliminate Spider Traps
 	ArrayList<String> urls=new ArrayList<String>();
+	ArrayList<String> referenceKeywords=new ArrayList<String>();
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
                                                            + "|png|mp3|mp3|zip|gz))$");
 
@@ -78,6 +77,8 @@ public class MyCrawler extends WebCrawler {
 
 				    	 
 						String finalName=baseName+"."+extension;
+
+				    	 referenceKeywords.add(baseName);
 						System.out.println(finalName);
 					
 				         writeToFile(doc.html(),finalName);
@@ -90,13 +91,24 @@ public class MyCrawler extends WebCrawler {
 						e.printStackTrace();
 					}
 
-                                        }
-     
+           	 PrintWriter writer;
+			try {
+				writer = new PrintWriter("HomeRemedies/0Keywords.html", "UTF-8");
+			 for(i=0;i<referenceKeywords.size();i++)   	 
+            	 writer.println(referenceKeywords.get(i));
+                	 writer.close();          
+             } catch (FileNotFoundException e) {
+ 				// TODO Auto-generated catch block
+ 				e.printStackTrace();
+ 			} catch (UnsupportedEncodingException e) {
+ 				// TODO Auto-generated catch block
+ 				e.printStackTrace();
+ 			}}
+             
          }}
 
      public void writeToFile(String htmlContent, String fileName) throws IOException, URISyntaxException {
-    		
-
+    	 
     	 PrintWriter writer = new PrintWriter("HomeRemedies/"+fileName, "UTF-8");
     	 writer.println(htmlContent);
     	 writer.close();
