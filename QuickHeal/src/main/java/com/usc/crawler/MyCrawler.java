@@ -1,7 +1,19 @@
 package com.usc.crawler;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FilenameUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -26,7 +38,7 @@ public class MyCrawler extends WebCrawler {
      public boolean shouldVisit(Page referringPage, WebURL url) {
          String href = url.getURL().toLowerCase();
          return !FILTERS.matcher(href).matches()
-                && href.startsWith("http://www.home-remedies-for-you.com/") && href.contains("/remedy/") && !urls.contains(href);
+                && href.startsWith("http://www.home-remedies-for-you.com/") && href.contains(".htm") && href.contains("/remedy/") && !urls.contains(href);
      }
 
      /**
@@ -54,8 +66,41 @@ public class MyCrawler extends WebCrawler {
 
              for (int i = 0; i < links.size(); i++) {
             	 	 urls.add(arrayView[i].toString());
-            	 	 
+            	 	try {
+            	 		String baseName = FilenameUtils.getBaseName(arrayView[i].toString());
+				         String extension = FilenameUtils.getExtension(arrayView[i].toString());
+            	 		//System.out.println(arrayView[i].toString());
+            	 		if(extension.contains("htm") && arrayView[i].toString().contains("/remedy/"))
+            	 		{
+				         Document doc = Jsoup.connect(arrayView[i].toString()).get();
+						
+						//System.out.println(doc.html());
+
+				    	 
+						String finalName=baseName+"."+extension;
+						System.out.println(finalName);
+					
+				         writeToFile(doc.html(),finalName);
+            	 		}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
                                         }
      
          }}
+
+     public void writeToFile(String htmlContent, String fileName) throws IOException, URISyntaxException {
+    		
+
+    	 PrintWriter writer = new PrintWriter("HomeRemedies/"+fileName, "UTF-8");
+    	 writer.println(htmlContent);
+    	 writer.close();
+
+    	
+    	}
 }

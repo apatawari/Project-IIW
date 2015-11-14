@@ -13,7 +13,7 @@ public class Controller {
 	static String line;
 
     public static void main(String[] args) throws Exception {
-    org.apache.log4j.BasicConfigurator.configure();
+    //org.apache.log4j.BasicConfigurator.configure();
     	
     
         String crawlStorageFolder = "data/crawl/root";
@@ -35,7 +35,7 @@ public class Controller {
       
         CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
         
-        int politenessDelay=20000;
+        int politenessDelay=25000;
         config.setPolitenessDelay(politenessDelay);
         
         config.setUserAgentString("CSCI548");
