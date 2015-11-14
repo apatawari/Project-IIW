@@ -1,12 +1,15 @@
 package com.usc.crawler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,107 +69,11 @@ public class MyCrawler extends WebCrawler {
              Object[] arrayView = links.toArray();
 
              for (int i = 0; i < links.size(); i++) {
-            	 if(arrayView[i].toString().contains("bik") && !urls.contains(arrayView[i].toString()))
-            	 {
-            		 urls.add(arrayView[i].toString());
-                     //System.out.println(arrayView[i]);
-                     
-                     
-                     boolean x=false;
-                     x=ToFetchOrNot(arrayView[i].toString());
-
-
-                     //checking if the wep page given the above url makes sense or not by satisfying the condition it should
-                     if(x)
-                     {
-                    	 System.out.println("Fetch Me Please\n");
-                      
-                    	 //get the html content and write it to the file
-                    	 try {
-							writeToFile(arrayView[i].toString());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-                     
-                     }
-                     
-                     
-            	 
-            	 }
-             }
-         }
+            	 	 urls.add(arrayView[i].toString());
+                     System.out.println(arrayView[i]);
+                                             
+          
     }
      
-     public boolean ToFetchOrNot(String url)
-     {
-         boolean flag=false;
-         String str=null;
-         int price=0;
-          try
-             {
-               TestHtmlParse thp = new TestHtmlParse(new URL(url));
-
-                 List divs = thp.getDivsByClass("postingtitletext");
-                 
-                 List divs1 = thp.getDivsByClass("price");
-                 
-                 for (Iterator iterator = divs.iterator(); iterator.hasNext();)
-                 {
-                     TagNode divElement = (TagNode) iterator.next();
-                      str=divElement.getText().toString().toLowerCase();
-                       //flag1=( divElement.getText().toString().toLowerCase().contains("crusier") || divElement.getText().toString().toLowerCase().contains("bicycle") || divElement.getText().toString().toLowerCase().contains("bike")) && !(divElement.getText().toString().toLowerCase().contains("part") || divElement.getText().toString().toLowerCase().contains("seat") || divElement.getText().toString().toLowerCase().contains("tire"));
-                 }
-                 for (Iterator iterator = divs1.iterator(); iterator.hasNext();)
-                 {
-                     TagNode divElement = (TagNode) iterator.next();
-                      price=Integer.parseInt(divElement.getText().toString().replace("$", ""));
-
-                    flag=price<5000 && price>100 ;
-                 }
-                                
-             }
-             catch(Exception e)
-             {
-                 e.printStackTrace();
-             }
-          if (flag==false){
-         return false;}
-          else{
-              System.out.println(str+"  "+price);
-              
-              
-              return true;}
-         
-     }
-     
-     public void    writeToFile(String url) throws IOException
-     {
-         Writer writer = null;
-
-         //getting the html content
-         URL url1 = new URL(url);
-         InputStream is = (InputStream) url1.getContent();
-         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-         String line = null;
-         String htmlContent=null;
-         StringBuffer sb = new StringBuffer();
-         while((line = br.readLine()) != null){
-              sb.append(line);
-                htmlContent = sb.toString();
-             }
-              
-        //Writing to file
-            String fileName = url.substring( url.lastIndexOf('/')+1, url.length() );
-
-             System.out.println(fileName);
-          
-             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("html/"+fileName), "utf-8"));
-            
-             writer.write(htmlContent);
-             writer.close();
-                
-
-
-     }    
+         }}
 }
