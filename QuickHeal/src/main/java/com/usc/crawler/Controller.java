@@ -1,6 +1,10 @@
 package com.usc.crawler;
 
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
+
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -12,23 +16,23 @@ public class Controller {
 
 	static String line;
 
-    public static void main(String[] args) throws Exception {
+    public void startCrawlingHomeRemedies() throws Exception {
     //org.apache.log4j.BasicConfigurator.configure();
     	
     
         String crawlStorageFolder = "data/crawl/root";
-        int numberOfCrawlers = 10;
-
+        int numberOfCrawlers = 5;
+        FileUtils.cleanDirectory(new File("HomeRemedies/")); 
         try
         {
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
-
+      config.setMaxPagesToFetch(5);
         /*
          * Instantiate the controller for this crawl.
          */
         
-        
+        config.setMaxDepthOfCrawling(2);
         PageFetcher pageFetcher = new PageFetcher(config);
         RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
@@ -38,7 +42,7 @@ public class Controller {
         int politenessDelay=25000;
         config.setPolitenessDelay(politenessDelay);
         
-        config.setUserAgentString("CSCI548");
+        config.setUserAgentString("CSCIProject");
         System.out.println(config.toString());
         
 
@@ -55,6 +59,13 @@ public class Controller {
          * will reach the line after this only when crawling is finished.
          */
         controller.start(MyCrawler.class, numberOfCrawlers);
+     // Wait for 30 seconds
+        Thread.sleep(60 * 1000);
+
+        // Send the shutdown request and then wait for finishing
+        controller.shutdown();
+       
+      
         }
         catch(Exception e)
         {

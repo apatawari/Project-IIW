@@ -1,4 +1,5 @@
 package com.usc.crawler;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +21,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class MyCrawler extends WebCrawler {
 	//created to eliminate Spider Traps
 	ArrayList<String> urls=new ArrayList<String>();
+	int count=0;
 	ArrayList<String> referenceKeywords=new ArrayList<String>();
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
                                                            + "|png|mp3|mp3|zip|gz))$");
@@ -51,6 +53,7 @@ public class MyCrawler extends WebCrawler {
          
          urls.add(url);
          
+      
          if (page.getParseData() instanceof HtmlParseData) {
              HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
              String text = htmlParseData.getText();
@@ -62,7 +65,8 @@ public class MyCrawler extends WebCrawler {
              System.out.println("Number of outgoing links: " + links.size());
              
              Object[] arrayView = links.toArray();
-
+             
+            	 
              for (int i = 0; i < links.size(); i++) {
             	 	 urls.add(arrayView[i].toString());
             	 	try {
@@ -82,7 +86,10 @@ public class MyCrawler extends WebCrawler {
 						System.out.println(finalName);
 					
 				         writeToFile(doc.html(),finalName);
+				         count++;
+				         
             	 		}
+            	 		
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -90,22 +97,27 @@ public class MyCrawler extends WebCrawler {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
+             }
+         }
            	 PrintWriter writer;
 			try {
-				writer = new PrintWriter("HomeRemedies/0Keywords.html", "UTF-8");
-			 for(i=0;i<referenceKeywords.size();i++)   	 
+				writer = new PrintWriter("HomeRemedies/Keywords.txt", "UTF-8");
+			 for(int i=0;i<referenceKeywords.size();i++)   {	 
             	 writer.println(referenceKeywords.get(i));
-                	 writer.close();          
+                	 writer.close();          }
              } catch (FileNotFoundException e) {
  				// TODO Auto-generated catch block
  				e.printStackTrace();
  			} catch (UnsupportedEncodingException e) {
  				// TODO Auto-generated catch block
  				e.printStackTrace();
- 			}}
-             
-         }}
+ 			}
+        
+         
+         }
+         
+         
+         
 
      public void writeToFile(String htmlContent, String fileName) throws IOException, URISyntaxException {
     	 
@@ -115,4 +127,5 @@ public class MyCrawler extends WebCrawler {
 
     	
     	}
+ 
 }
