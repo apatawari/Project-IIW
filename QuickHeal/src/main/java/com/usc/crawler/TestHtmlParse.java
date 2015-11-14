@@ -26,7 +26,7 @@ public class TestHtmlParse
 
     List getDivsByClass(String CSSClassname)
     {
-        List divList = new ArrayList();
+        List divList = new ArrayList<TagNode>();
 
         TagNode divElements[] = rootNode.getElementsByName("span", true);
         for (int i = 0; divElements != null && i < divElements.length; i++)

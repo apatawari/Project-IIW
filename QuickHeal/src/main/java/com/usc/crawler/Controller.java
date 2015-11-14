@@ -13,11 +13,14 @@ public class Controller {
 	static String line;
 
     public static void main(String[] args) throws Exception {
-    //	org.apache.log4j.BasicConfigurator.configure();
+    org.apache.log4j.BasicConfigurator.configure();
     	
+    
         String crawlStorageFolder = "data/crawl/root";
         int numberOfCrawlers = 10;
 
+        try
+        {
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
 
@@ -52,6 +55,12 @@ public class Controller {
          * will reach the line after this only when crawling is finished.
          */
         controller.start(MyCrawler.class, numberOfCrawlers);
+        }
+        catch(Exception e)
+        {
+        	e.printStackTrace();
+        }
         
     }
+    
 }
