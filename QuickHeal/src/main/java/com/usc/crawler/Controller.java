@@ -49,7 +49,7 @@ public class Controller {
          * which are found in these pages
          */
 
-        controller.addSeed("http://losangeles.craigslist.org/search/bia");
+        controller.addSeed("http://www.home-remedies-for-you.com/");
         /*
          * Start the crawl. This is a blocking operation, meaning that your code
          * will reach the line after this only when crawling is finished.

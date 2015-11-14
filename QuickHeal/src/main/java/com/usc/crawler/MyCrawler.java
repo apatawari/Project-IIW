@@ -42,7 +42,7 @@ public class MyCrawler extends WebCrawler {
      public boolean shouldVisit(Page referringPage, WebURL url) {
          String href = url.getURL().toLowerCase();
          return !FILTERS.matcher(href).matches()
-                && href.startsWith("http://losangeles.craigslist.org/") && href.contains("bia") && !urls.contains(href);
+                && href.startsWith("http://www.home-remedies-for-you.com/") && !urls.contains(href);
      }
 
      /**
