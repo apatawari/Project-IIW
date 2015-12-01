@@ -2,10 +2,13 @@ package com.usc.wrapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,9 +25,12 @@ import org.jsoup.select.Elements;
  */
 
 public class Wrapper {
-
+	static Document doc;
 	private int count=0;
-	public void extractDataFromHtmlSource1(String folderLocation) throws IOException
+	static PrintWriter writer;
+
+	
+	public void extractDataFromHtmlSource1(String folderLocation) throws IOException, URISyntaxException
 	{
 		//get the html files and apply jsoup parsing to extract specific content
 		File folder = new File(folderLocation);
@@ -35,17 +41,18 @@ public class Wrapper {
 		    if (file.isFile()) {
 		       // System.out.println(file.getName());
 		    	File input = new File("HomeRemedies/"+file.getName());
-		    	Document doc = Jsoup.parse(input, "UTF-8");
+		    	 doc = Jsoup.parse(input, "UTF-8");
 		    	
 		    	//Name of the illness
-		    	System.out.println(doc.getElementsByTag("h1").text());
-		    	
+		    	 String baseName = FilenameUtils.getBaseName(file.getName());
+		    	 writer = new PrintWriter("HomeRemedies/text/"+baseName.replace("-", " ")+".txt", "UTF-8");
 		 
     	Elements elements = doc.select(".anchoralign");
     	//System.out.println(elements);
     	if(elements.size()>0)
     	{
-    		handleQuotedMessages(elements);
+    		
+    		handleQuotedMessages(elements,baseName.replace("-", " "));
     	count++;}
 		    }
 		    else System.out.println(file.getName());
@@ -53,47 +60,35 @@ public class Wrapper {
 		System.out.println(count);
 }
 	
-	private static void handleQuotedMessages(Elements quotedMessages) {
-		
+	private static String handleQuotedMessages(Elements quotedMessages, String filename) throws IOException, URISyntaxException {
+		 StringBuilder stringBuilder = new StringBuilder();
         Element firstQuotedMessage = quotedMessages.first();
         List<Node> siblings = firstQuotedMessage.siblingNodes();
         List<Node> elementsBetween = new ArrayList<Node>();
         Element currentQuotedMessage = firstQuotedMessage;
-        for (int i = 1; i < siblings.size(); i++) {
+        for (int i = 0; i < siblings.size(); i++) {
             Node sibling = siblings.get(i);
 
             // see if this Node is a quoted message
             if (!isQuotedMessage(sibling)) {
-            	if(sibling.nodeName()=="aside" || sibling.childNodeSize()>1)
-            	{
-            		if(sibling.nodeName()=="div" || sibling.nodeName()=="aside" || sibling.nodeName()=="section")
-            		{
-            			
-            		}
-            		else
-            		{
-            		
-            			elementsBetween.add(sibling);
-            		//	System.out.println(sibling.toString());	
-            		}
-            	
-            	}
-            	else 
-            	{
-            		
-            		elementsBetween.add(sibling);
-            	//System.out.println(sibling.toString());
-            	} 
+            	System.out.println(sibling.toString());
+            	elementsBetween.add(sibling);
             }	else {
             	
-                createQuotePost(currentQuotedMessage, elementsBetween);
+                createQuotePost(currentQuotedMessage, elementsBetween,filename);
                 currentQuotedMessage = (Element) sibling;
                 elementsBetween.clear();
             }
         }
         if (!elementsBetween.isEmpty()) {
-            createQuotePost(currentQuotedMessage, elementsBetween);
+           createQuotePost(currentQuotedMessage, elementsBetween,filename);
+            
         }
+        writer.close();
+
+		return stringBuilder.toString();
+        
+     
     }
 
     private static boolean isQuotedMessage(Node node) {
@@ -118,23 +113,51 @@ public class Wrapper {
         return els;
     }
 
-    private static void createQuotePost(Element quote, List<Node> elementsBetween) {
-       // System.out.println("createQuotePost: " + quote);
-       System.out.println("createQuotePost: " + elementsBetween.size()+ "\n\n");
-//    	
-//    	Document doc = Jsoup.parse(elementsBetween.get(3).toString());
-//    	Elements link = doc.getElementsByTag("h2");
+    private static void createQuotePost(Element quote, List<Node> elementsBetween,String filename) {
+    
+   //System.out.println("createQuotePost: " + quote.getElementsByTag("a").attr("id"));
+     // System.out.println("createQuotePost: " + elementsBetween.size()+ "\n\n");
+    	//StringBuilder stringBuilder = new StringBuilder();
+    	for(int i=0;i<elementsBetween.size();i++) 
+    	{
+    		if(elementsBetween.get(i).childNodeSize()!=0 )
+    		{
+    			   		writer.println(elementsBetween.get(i).unwrap().toString());
+    		}
+    		
+    	}
 //
+//    		{
+//    		if(!elementsBetween.get(i).unwrap().toString().equals(null))
+//    			System.out.println(elementsBetween.get(i).unwrap());
+//		
+//    		}
+//    	    	}
+//      }
+//    	if(elementsBetween.size()>3)
+//    	{
+//   		Document doc = Jsoup.parse(elementsBetween.get(3).toString());
+//    	Elements link = doc.getElementsByTag("h2");
 //    	if(link.text().length()>0)
 //    			{
 //       // System.out.println(link.text().substring(link.text().charAt(0), link.text().indexOf(' ')));
 //        // handle imgs
-//    		String[] words = link.text().split(" ");  
-//    		System.out.println(words[0]);
-//        Document doc1 =Jsoup.parse(elementsBetween.get(5).toString());
+//	    String[] words = link.text().split(" ");  
+//    	System.out.println(words[0]);
+//        Document doc1 =Jsoup.parse(elementsBetween.get(5).toString());       
 //        Elements link1 = doc1.getElementsByTag("p");
 //        System.out.println(link1.text()+"\n");
 //    			}   
-    }
+//    }	
+    		   }
+    
+    public static void writeToFile(String htmlContent, String fileName) throws IOException, URISyntaxException {
+   	 
+   	 PrintWriter writer = new PrintWriter("HomeRemedies/text/"+fileName.replace(' ', '-')+".txt", "UTF-8");
+   	 writer.println(htmlContent);
+   	 writer.close();
+
+   	
+   	}
 	}
 
